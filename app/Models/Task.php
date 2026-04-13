@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -23,6 +24,9 @@ use Illuminate\Support\Carbon;
  */
 class Task extends Model
 {
+
+    use HasUuids;
+
     protected function casts(): array
     {
         return [
@@ -30,6 +34,16 @@ class Task extends Model
             'completed_at' => 'datetime',
             'task_date' => 'datetime'
         ];
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
     }
 
     public function user(): BelongsTo

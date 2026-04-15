@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -90,6 +93,10 @@ class AppServiceProvider extends ServiceProvider
                 ->letters()
                 ->numbers()
                 ->symbols();
+        });
+
+        DB::listen(function(QueryExecuted $query) {
+            Log::info($query->sql, ['bindings' => $query->bindings, 'time' => $query->time]);
         });
     }
 }

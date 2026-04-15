@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -16,10 +18,12 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        // $categories = $user->categories()->orderBy('created_at', 'desc')->paginate();
+
         $categories = $user->categories()->latest()->paginate();
 
-        return view('categories.index', ['categories' => $categories]);
+        // return view('categories.index', ['categories' => $categories]);
+        // return response()->json(['categories' => $categories]);
+        return new CategoryResource($categories->first());
     }
 
     /**
@@ -47,6 +51,10 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        if(Auth::user()->cannot('manage', $category)) {
+            abort(403);
+        }
+
         return view('categories.edit', ['category' => $category]);
     }
 

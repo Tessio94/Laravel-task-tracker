@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property string $uuid
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Task> $tasks

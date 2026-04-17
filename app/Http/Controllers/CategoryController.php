@@ -21,9 +21,11 @@ class CategoryController extends Controller
 
         $categories = $user->categories()->latest()->paginate();
 
-        // return view('categories.index', ['categories' => $categories]);
-        // return response()->json(['categories' => $categories]);
-        return new CategoryResource($categories->first());
+
+        return view('categories.index', [
+            'categories' => $categories->toResourceCollection()->resolve(),
+            'links' => fn() => $categories->links()
+        ]);
     }
 
     /**
@@ -51,11 +53,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        if(Auth::user()->cannot('manage', $category)) {
-            abort(403);
-        }
-
-        return view('categories.edit', ['category' => $category]);
+        return view('categories.edit', ['category' => $category->toResource()->resolve()]);
     }
 
     /**

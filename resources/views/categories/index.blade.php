@@ -48,16 +48,16 @@
                                                 {{ $category['name'] }}
                                             </td>
                                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $category->created_at?->format('M d, Y g:i A') ?? '-' }}
+                                                {{ $category['created_at'] ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $category->updated_at?->format('M d, Y g:i A') ?? '-' }}
+                                                {{ $category['updated_at'] ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="{{ route('categories.edit', ['category' => $category['uuid']]) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-3">
+                                                <a href="{{ route('categories.edit', ['category' => $category['id']]) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-3">
                                                     {{ __('Edit') }}
                                                 </a>
-                                                <form action="{{ route('categories.destroy', $category)  }}" method="POST" class="inline-block"
+                                                <form action="{{ route('categories.destroy', ['category' => $category['id']])  }}" method="POST" class="inline-block"
                                                 onsubmit="return confirm('Are you sure you want to delete this category?');">
                                                     @csrf
                                                     @method('DELETE')
@@ -66,7 +66,7 @@
                                                     </button>
                                                 </form>
 
-                                                {{-- <button type="button" data-category-delete data-id="{{ $category['uuid'] }}" class="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 disabled:opacity-50">
+                                                {{-- <button type="button" data-category-delete data-id="{{ $category['id'] }}" class="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 disabled:opacity-50">
                                                     {{ __('Delete') }}
                                                 </button> --}}
 
@@ -78,7 +78,7 @@
                         </div>
 
                         <div class="mt-4">
-                            {{ $categories->links() }}
+                          {{  $links()  }}
                         </div>
                     @else
                         <div class="text-center py-8">

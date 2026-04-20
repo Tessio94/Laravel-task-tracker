@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             Category::create(
                 [
                     'name' => 'Category ' . ($i + 1),
-                    'user_id' => 4,
+                    'user_id' => 2,
                 ]
             );
         }

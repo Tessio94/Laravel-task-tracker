@@ -52,8 +52,12 @@ Route::middleware(['auth', 'verified'])->group(function() {
         ->middlewareFor(['edit, update, destroy'],'can:manage,category');
 
     Route::resource('tasks', TaskController::class)
-        ->except('show');
-        // ->middlewareFor(['edit, update, destroy'],'can:manage,task');
+        ->except('show')
+        ->middlewareFor(['edit, update, destroy'],'can:manage,task');
+
+    Route::patch('/tasks/{task}/toggle-completion', [TaskController::class, 'toggleCompletion'])
+        ->name('tasks.toggle-completion')
+        ->middleware('can:manage,task');
 
     Route::redirect('/', '/dashboard');
 });

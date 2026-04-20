@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
@@ -54,6 +56,8 @@ class TaskController extends Controller
     {
         $taskData = $request->validated();
 
+        $taskData['category_id'] = Category::where('uuid', $request->category_id)->value('id');
+
         $request->user()->tasks()->create($taskData);
 
         return to_route('tasks.index')->with('success', 'Task created successfully.');
@@ -76,7 +80,27 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $task->update($request->validated());
+        $validData = $request->validated();
+
+
+        if($request->category_id) {
+
+            $category = Category::where('uuid', $request->category_id)->first();
+
+            if(! $category || $request->user()->cannot('manage', $category)) {
+                throw ValidationException::withMessages(['category_id' => 'The given category id does not exist.']);
+            }
+
+            $task->category()->associate($category);
+
+            unset($validData['category_id']);
+
+            $validData['is_recurring'] = $request->boolean('is_recurring');
+        }
+
+        $task->fill($validData);
+
+        $task->save();
 
         return to_route('tasks.index')->with('success', 'Task updated successfully.');
     }
@@ -84,8 +108,26 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return to_route('tasks.index')->with('success', 'Task deleted successfully.');
+    }
+
+
+    /**
+     * Toggle the completion status of the task
+     */
+    public function toggleCompletion(Task $task)
+    {
+
+        $task->completed_at = $task->completed_at ? null : now();
+
+        $task->save();
+
+        return response()->json([
+            'completed' => (bool) $task->completed_at
+        ]);
     }
 }

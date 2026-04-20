@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class UpdateTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::user()->can('manage', $this->task);
     }
 
     /**
@@ -23,7 +24,11 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'category_id' => ['nullable'],
+            'task_date' => ['nullable', 'date'],
+            'is_recurring' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->boolean('is_recurring')->default(false);
-            $table->dateTime('tasks_date')->nullable();
+            $table->dateTime('task_date')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();
 

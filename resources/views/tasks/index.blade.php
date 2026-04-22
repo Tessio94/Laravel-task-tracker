@@ -32,11 +32,11 @@
                         <!-- Status Filter -->
                         <div>
                             <x-input-label for="status" :value="__('Status')" />
-                            {{-- <x-select-input id="status" class="block mt-1 w-full" name="status">
+                            <x-select-input id="status" class="block mt-1 w-full" name="status">
                                 <option value="">{{ __('All') }}</option>
                                 <option value="incomplete" {{ ($filters['status'] ?? '') === \App\Enums\TaskStatus::Incomplete->value ? 'selected' : '' }}>{{ __('Incomplete') }}</option>
                                 <option value="completed" {{ ($filters['status'] ?? '') === \App\Enums\TaskStatus::Completed->value ? 'selected' : '' }}>{{ __('Completed') }}</option>
-                            </x-select-input> --}}
+                            </x-select-input>
                         </div>
 
                         <!-- Category Filter -->

@@ -17,12 +17,20 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $category = null;
 
+        if($request->category_id) {
+            $category = Category::where('uuid', $request->category_id)->first();
+
+            if(! $category || $request->user()->cannot('manage', $category)) {
+                throw ValidationException::withMessages(['category_id' => 'The given category id does not exist.']);
+            }
+        }
 
         $query = $user->tasks()->with('category')
             ->when($request->status === 'completed', fn($query) => $query->whereNotNull('completed_at'))
             ->when($request->status === 'incomplete', fn($query) => $query->whereNull('completed_at'))
-            ->when($request->filled('category_id'), fn($query) => $query->where('category_id', $request->category_id))
+            ->when($category, fn($query) => $query->where('category_id', $category->id))
             ->when($request->filled('date_from'), fn($query) => $query->whereDate('task_date', '>=', $request->date_from))
             ->when($request->filled('date_to'), fn($query) => $query->whereDate('task_date', '<=', $request->date_to))
             ->latest();
@@ -56,7 +64,19 @@ class TaskController extends Controller
     {
         $taskData = $request->validated();
 
-        $taskData['category_id'] = Category::where('uuid', $request->category_id)->value('id');
+        // $taskData['category_id'] = Category::where('uuid', $request->category_id)->value('id');
+
+        if($request->category_id) {
+
+            $category = Category::where('uuid', $request->category_id)->first();
+
+            if(! $category || $request->user()->cannot('manage', $category)) {
+                throw ValidationException::withMessages(['category_id' => 'The given category id does not exist.']);
+            }
+
+            $taskData['category_id'] = $category->id;
+
+        }
 
         $request->user()->tasks()->create($taskData);
 
@@ -82,7 +102,6 @@ class TaskController extends Controller
     {
         $validData = $request->validated();
 
-
         if($request->category_id) {
 
             $category = Category::where('uuid', $request->category_id)->first();
@@ -95,11 +114,9 @@ class TaskController extends Controller
 
             unset($validData['category_id']);
 
-            $validData['is_recurring'] = $request->boolean('is_recurring');
         }
 
         $task->fill($validData);
-
         $task->save();
 
         return to_route('tasks.index')->with('success', 'Task updated successfully.');
@@ -126,8 +143,10 @@ class TaskController extends Controller
 
         $task->save();
 
-        return response()->json([
-            'completed' => (bool) $task->completed_at
-        ]);
+        return back()->with('success', 'Task status updated successfully.');
+
+        // return response()->json([
+        //     'completed' => (bool) $task->completed_at
+        // ]);
     }
 }

@@ -16,13 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        for($i = 0; $i < 50; $i++) {
-            Category::create(
-                [
-                    'name' => 'Category ' . ($i + 1),
-                    'user_id' => 2,
-                ]
-            );
-        }
+        $this->call(
+            [
+                UserSeeder::class,
+                CategorySeeder::class,
+                TaskSeeder::class,
+                RecurringTaskSeeder::class,
+            ]
+        );
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\RecurringTaskController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::patch('/tasks/{task}/toggle-completion', [TaskController::class, 'toggleCompletion'])
         ->name('tasks.toggle-completion')
         ->middleware('can:manage,task');
+
+    Route::resource('recurring-tasks', RecurringTaskController::class)
+        ->except(['show'])
+        ->middlewareFor(['edit', 'update', 'destroy'], 'can:manage,recurring_task');
 
     Route::redirect('/', '/dashboard');
 });

@@ -15,7 +15,6 @@ class TaskSeeder extends Seeder
     public function run(): void
     {
         $users = User::with('categories')->get();
-
         foreach($users as $user) {
             $categories = $user->categories;
 

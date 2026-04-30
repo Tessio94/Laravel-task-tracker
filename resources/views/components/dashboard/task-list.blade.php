@@ -43,7 +43,8 @@
                                     @endif
                                     @if($showDate && ($task['task_date'] ?? null))
                                         <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $task['task_date']['display'] }}
+                                            {{-- {{ $task['task_date']['display'] }} --}}
+                                            {{ $task['task_date'] }}
                                         </span>
                                     @endif
                                 </div>

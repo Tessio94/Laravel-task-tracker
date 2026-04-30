@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
@@ -125,11 +126,11 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(Task $task): Response
     {
         $task->delete();
 
-        return to_route('tasks.index')->with('success', 'Task deleted successfully.');
+        return response()->noContent();
     }
 
 
@@ -143,10 +144,10 @@ class TaskController extends Controller
 
         $task->save();
 
-        return back()->with('success', 'Task status updated successfully.');
+        // return back()->with('success', 'Task status updated successfully.');
 
-        // return response()->json([
-        //     'completed' => (bool) $task->completed_at
-        // ]);
+        return response()->json([
+            'completed' => (bool) $task->completed_at
+        ]);
     }
 }

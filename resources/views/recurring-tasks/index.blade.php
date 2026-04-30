@@ -84,9 +84,11 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                 @if($recurringTask['start_date'] || $recurringTask['end_date'])
-                                                    {{ $recurringTask['start_date']['display'] ?? '...' }}
+                                                    {{ $recurringTask['start_date'] ?? '...' }}
+                                                    {{-- {{ $recurringTask['start_date']['display'] ?? '...' }} --}}
                                                     -
-                                                    {{ $recurringTask['end_date']['display'] ?? '...' }}
+                                                    {{ $recurringTask['end_date'] ?? '...' }}
+                                                    {{-- {{ $recurringTask['end_date']['display'] ?? '...' }} --}}
                                                 @else
                                                     -
                                                 @endif

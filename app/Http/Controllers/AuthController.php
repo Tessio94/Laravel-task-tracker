@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Auth\RegisterUser;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
@@ -32,28 +33,14 @@ class AuthController extends Controller
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
-        throw ValidationException::withMessages([
-            'email' => 'These credentials do not match our records'
-        ]);
-
-       return back()->withInput()->withErrors(['email' => 'These credentials do not match our records.']);
+       return back()
+        ->withErrors(['email' => 'These credentials do not match our records.'])
+        ->withInput($request->except('password'));
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request, RegisterUser $registerUser)
     {
-
-
-        $validated = $request->validated();
-
-        $user = User::create(
-            [
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-            ]
-        );
-
-        event(new Registered($user));
+        $user = $registerUser->execute($request->validated());
 
         Auth::login($user);
 

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRecurringTaskRequest;
 use App\Models\Category;
 use App\Models\RecurringTask;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class RecurringTaskController extends Controller
@@ -24,8 +25,6 @@ class RecurringTaskController extends Controller
             ->paginate();
 
         $categories = $request->user()->categories()->orderBy('name')->pluck('name', 'uuid')->toArray();
-
-        dd($request->user()->recurringTasks()->latest());
 
         return view('recurring-tasks.index', [
             'recurringTasks' => $recurringTasks->toResourceCollection()->resolve(),
@@ -121,11 +120,11 @@ class RecurringTaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RecurringTask $recurringTask)
+    public function destroy(RecurringTask $recurringTask): Response
     {
         $recurringTask->delete();
 
-        return to_route('recurring-tasks.index')->with('success', 'Recurring task deleted successfully.');
+        return response()->noContent();
     }
 
     private function buildFrequencyConfig(array $data): ?array
